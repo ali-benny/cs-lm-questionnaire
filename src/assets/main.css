@@ -1,2 +1,17 @@
 @import 'tailwindcss';
 @plugin "daisyui";
+
+.rating {
+  margin-left: 1%;
+  display: inherit
+}
+
+.rating-container {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.label {
+  text-wrap: normal;
+}

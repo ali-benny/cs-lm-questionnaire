@@ -9,8 +9,8 @@ const emptyCourse = {
   satisfaction: 0,
   relevance: 0,
   wouldChooseAgain: '',
-  workload: 0,
-  theoryPracticeBalance: 0,
+  workload: 3,
+  theoryPracticeBalance: 3,
   idealBalance: '',
   applicability: 0,
   courseDescriptionMatch: 0,
@@ -260,23 +260,18 @@ function submitSurvey() {
                   class="select validator select-bordered w-full"
                 >
                   <option disabled selected value="">Seleziona</option>
-                  <option value="in_sede">In sede</option>
-                  <option value="fuori_sede">Fuori sede</option>
-                  <option value="pendolare">Pendolare</option>
+                  <option value="in_sede">
+                    In sede (Bologna o entro i 90min di percorrenza con i mezzi pubblici)
+                  </option>
+                  <option value="pendolare">
+                    Pendolare (oltre i 90min di percorrenza con i mezzi pubblici)
+                  </option>
+                  <option value="fuorisede">Fuorisede</option>
                 </select>
               </div>
 
-              <div v-if="studentProfile.residence === 'pendolare'">
-                <label class="label">Distanza in km</label>
-                <input
-                  type="number"
-                  v-model="studentProfile.distanceKm"
-                  class="input input-bordered w-full"
-                />
-              </div>
-
-              <div v-else>
-                <label class="label">Anno di Iscrizione</label>
+              <div>
+                <label class="label">Anno di Immatricolazione</label>
                 <input
                   type="number"
                   v-model="studentProfile.enrollmentYear"
@@ -317,29 +312,33 @@ function submitSurvey() {
                 </label>
               </div>
             </div>
+            <div>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label class="label">Corso di Laurea Triennale</label>
+                  <input
+                    type="text"
+                    v-model="studentProfile.academicBackground.degree"
+                    class="input input-bordered w-full"
+                  />
+                </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label class="label">Corso di Laurea Triennale</label>
-                <input
-                  type="text"
-                  v-model="studentProfile.academicBackground.degree"
-                  class="input input-bordered w-full"
-                />
-              </div>
-
-              <div>
-                <label class="label">Ateneo di Provenienza</label>
-                <input
-                  type="text"
-                  v-model="studentProfile.academicBackground.university"
-                  class="input input-bordered w-full"
-                />
+                <div>
+                  <label class="label">Ateneo di Provenienza</label>
+                  <input
+                    type="text"
+                    v-model="studentProfile.academicBackground.university"
+                    class="input input-bordered w-full"
+                  />
+                </div>
               </div>
             </div>
 
+          <!-- Valutazione complessiva -->
+          <section class="divider divider-primary mt-8">Valutazione del percorso di studi</section>
+          <div class="space-y-6">
             <div>
-              <label class="label">Curriculum Scelto</label>
+              <label class="label">Quale Curriculum hai scelto?</label>
               <select
                 v-model="studentProfile.curriculum"
                 class="select validator select-bordered w-full"
@@ -356,19 +355,15 @@ function submitSurvey() {
             </div>
 
             <div>
-              <label class="label">Motivazione Principale della Scelta del Curriculum</label>
+              <label class="label">Perché hai scelto questo Curriculum?</label>
               <textarea
                 v-model="studentProfile.motivation"
                 class="textarea textarea-bordered w-full h-24"
               ></textarea>
             </div>
           </div>
-
-          <!-- Valutazione complessiva -->
-          <section class="divider divider-primary mt-8">Valutazione Complessiva</section>
-          <div class="space-y-6">
-            <div class="flex items-center">
-              <label class="label">Soddisfazione Generale per il Curriculum Scelto</label>
+            <div class="rating-container">
+              <label class="label">Quanto sei soddisfatto ad oggi del Curriculum scelto?</label>
               <div class="rating rating-lg">
                 <input
                   type="radio"
@@ -418,7 +413,7 @@ function submitSurvey() {
               ></textarea>
             </div>
 
-            <div class="flex items-center">
+            <div class="rating-container">
               <label class="label">Percezione di Preparazione per il Mondo del Lavoro</label>
               <div class="rating rating-lg">
                 <input
@@ -459,7 +454,7 @@ function submitSurvey() {
               </div>
             </div>
 
-            <div>
+            <div class="rating-container">
               <label class="label"
                 >Valutazione dell'Organizzazione Didattica (orari, calendario, distribuzione dei
                 corsi)</label
@@ -503,7 +498,7 @@ function submitSurvey() {
               </div>
             </div>
 
-            <div>
+            <div class="rating-container">
               <label class="label">Valutazione delle Strutture e dei Servizi di Supporto</label>
               <div class="rating rating-lg">
                 <input
@@ -575,7 +570,7 @@ function submitSurvey() {
               </div>
             </div>
 
-            <div class="mb-4">
+            <div class="mb-4 rating-container">
               <label class="label">Soddisfazione Generale</label>
               <div class="rating rating-lg">
                 <input
@@ -617,7 +612,7 @@ function submitSurvey() {
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-              <div>
+              <div class="rating-container">
                 <label class="label">Rilevanza Percepita per il Tuo Percorso Formativo</label>
                 <div class="rating">
                   <input
@@ -700,31 +695,31 @@ function submitSurvey() {
                 <label class="label"
                   >Adeguatezza del Carico di Lavoro Rispetto ai CFU Assegnati</label
                 >
-                <div class="join w-full">
-                  <span class="join-item btn btn-sm">Insufficiente</span>
+                <div class="w-full flex items-center">
+                  <span class="label text-base-content mx-2">Insufficiente</span>
                   <input
                     type="range"
                     min="1"
                     max="5"
                     v-model="course.workload"
-                    class="range range-accent join-item w-full"
+                    class="range range-accent range-xs join-item w-full"
                   />
-                  <span class="join-item btn btn-sm">Eccessivo</span>
+                  <span class="label text-base-content mx-2">Eccessivo</span>
                 </div>
               </div>
 
               <div>
                 <label class="label">Equilibrio tra Teoria e Pratica</label>
-                <div class="join w-full">
-                  <span class="join-item btn btn-sm">Troppa teoria</span>
+                <div class="flex items-center w-full">
+                  <span class="label text-base-content mx-2">Troppa teoria</span>
                   <input
                     type="range"
                     min="1"
                     max="5"
                     v-model="course.theoryPracticeBalance"
-                    class="range range-accent join-item w-full"
+                    class="range range-accent join-item w-full range-xs"
                   />
-                  <span class="join-item btn btn-sm">Troppa pratica</span>
+                  <span class="label text-base-content mx-2">Troppa pratica</span>
                 </div>
               </div>
 
@@ -736,7 +731,7 @@ function submitSurvey() {
                 ></textarea>
               </div>
 
-              <div>
+              <div class="rating-container">
                 <label class="label">Applicabilità delle Conoscenze nel Mondo Professionale</label>
                 <div class="rating">
                   <input
@@ -777,7 +772,7 @@ function submitSurvey() {
                 </div>
               </div>
 
-              <div>
+              <div class="rating-container">
                 <label class="label"
                   >Corrispondenza tra Descrizione/Titolo del Corso e Contenuti Effettivi</label
                 >
@@ -820,7 +815,7 @@ function submitSurvey() {
                 </div>
               </div>
 
-              <div>
+              <div class="rating-container">
                 <label class="label"
                   >Coerenza tra Contenuti del Corso e Modalità di Valutazione</label
                 >
@@ -863,7 +858,7 @@ function submitSurvey() {
                 </div>
               </div>
 
-              <div>
+              <div class="rating-container">
                 <label class="label">Qualità del Materiale Didattico</label>
                 <div class="rating">
                   <input
@@ -905,10 +900,10 @@ function submitSurvey() {
               </div>
 
               <div
-                class="border-t pt-4"
+                class=" pt-4 border-t-2 border-base-content/10"
                 v-if="course.professorsEvaluation && course.professorsEvaluation.length > 0"
               >
-                <label class="label font-medium">Valutazione dei Docenti</label>
+                <p class="label text-lg font-bold mb-2">Valutazione dei Docenti</p>
 
                 <div
                   v-for="(professor, profIndex) in course.professorsEvaluation"
@@ -918,7 +913,7 @@ function submitSurvey() {
                   <h4 class="font-medium mb-2">Docente: {{ professor.id }}</h4>
 
                   <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div>
+                    <div class='rating-container'>
                       <label class="label">Preparazione</label>
                       <div class="rating">
                         <input
@@ -959,7 +954,7 @@ function submitSurvey() {
                       </div>
                     </div>
 
-                    <div>
+                    <div class="rating-container">
                       <label class="label">Chiarezza</label>
                       <div class="rating">
                         <input
@@ -1000,7 +995,7 @@ function submitSurvey() {
                       </div>
                     </div>
 
-                    <div>
+                    <div class="rating-container">
                       <label class="label">Disponibilità</label>
                       <div class="rating">
                         <input
@@ -1050,6 +1045,7 @@ function submitSurvey() {
                   Seleziona un corso per valutare i docenti.
                 </div>
               </div>
+              <div class="divider"></div>
 
               <div>
                 <label class="label"
@@ -1103,7 +1099,7 @@ function submitSurvey() {
           <!-- Analisi curriculare -->
           <section class="divider divider-primary mt-8">Analisi Curriculare e Suggerimenti</section>
           <div class="space-y-4">
-            <div>
+            <div class="rating-container">
               <label class="label"
                 >Ritieni che il tuo curriculum ti abbia fornito le competenze che ti
                 aspettavi?</label
@@ -1167,7 +1163,7 @@ function submitSurvey() {
               ></textarea>
             </div>
 
-            <div>
+            <div class="rating-container">
               <label class="label"
                 >Interesse per moduli brevi (3 CFU) su competenze tecniche specifiche</label
               >
@@ -1235,7 +1231,7 @@ function submitSurvey() {
               </select>
             </div>
 
-            <div>
+            <div class="rating-container">
               <label class="label"
                 >Percezione di preparazione rispetto alle richieste del mercato del lavoro</label
               >

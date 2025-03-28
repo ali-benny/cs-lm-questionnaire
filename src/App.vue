@@ -14,6 +14,7 @@ import { RouterLink, RouterView } from 'vue-router'
           <RouterLink to="/survey" class="btn btn-ghost">Questionario</RouterLink>
         </nav>
       </div>
+      <!-- Theme Light-Dark controller -->
       <label class="swap swap-rotate">
         <!-- this hidden checkbox controls the state -->
         <input type="checkbox" class="theme-controller" value="light" />

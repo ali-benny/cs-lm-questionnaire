@@ -294,11 +294,20 @@ function submitSurvey() {
               <div>
                 <!-- TODO: usare dropdown con aa... -->
                 <label>Anno di Immatricolazione</label>
-                <input
-                  type="number"
+
+                <select
                   v-model="studentProfile.enrollmentYear"
-                  class="input input-bordered w-full"
-                />
+                  class="select validator select-bordered w-full"
+                >
+                  <option disabled selected value="">Seleziona</option>
+                  <option
+                    v-for="year in [2019, 2020, 2021, 2022, 2023, 2024]"
+                    :key="year"
+                    :value="year"
+                  >
+                    a.a. {{ year }}/{{ year + 1 }}
+                  </option>
+                </select>
               </div>
             </div>
 

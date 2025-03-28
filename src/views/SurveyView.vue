@@ -2,6 +2,7 @@
 import { ref, computed, watch } from 'vue'
 import degreesData from '../../config/degrees.json'
 import teachingsData from '../../config/teachings.json'
+import StarRating from '../components/StarRating.vue'
 
 const emptyCourse = {
   name: '',
@@ -387,43 +388,7 @@ function submitSurvey() {
             </div>
             <div class="rating-container">
               <label>Quanto sei soddisfatto ad oggi del Curriculum scelto?</label>
-              <div class="rating rating-lg">
-                <input
-                  type="radio"
-                  name="rating-general"
-                  class="mask mask-star-2 bg-orange-400"
-                  value="1"
-                  v-model="satisfaction.general"
-                />
-                <input
-                  type="radio"
-                  name="rating-general"
-                  class="mask mask-star-2 bg-orange-400"
-                  value="2"
-                  v-model="satisfaction.general"
-                />
-                <input
-                  type="radio"
-                  name="rating-general"
-                  class="mask mask-star-2 bg-orange-400"
-                  value="3"
-                  v-model="satisfaction.general"
-                />
-                <input
-                  type="radio"
-                  name="rating-general"
-                  class="mask mask-star-2 bg-orange-400"
-                  value="4"
-                  v-model="satisfaction.general"
-                />
-                <input
-                  type="radio"
-                  name="rating-general"
-                  class="mask mask-star-2 bg-orange-400"
-                  value="5"
-                  v-model="satisfaction.general"
-                />
-              </div>
+              <StarRating v-model="satisfaction.general" />
             </div>
 
             <div>
@@ -468,85 +433,13 @@ function submitSurvey() {
 
             <div class="mb-4 rating-container">
               <label>Soddisfazione Generale</label>
-              <div class="rating rating-lg">
-                <input
-                  type="radio"
-                  :name="`rating-course-${index}`"
-                  class="mask mask-star-2 bg-orange-400"
-                  value="1"
-                  v-model="course.satisfaction"
-                />
-                <input
-                  type="radio"
-                  :name="`rating-course-${index}`"
-                  class="mask mask-star-2 bg-orange-400"
-                  value="2"
-                  v-model="course.satisfaction"
-                />
-                <input
-                  type="radio"
-                  :name="`rating-course-${index}`"
-                  class="mask mask-star-2 bg-orange-400"
-                  value="3"
-                  v-model="course.satisfaction"
-                />
-                <input
-                  type="radio"
-                  :name="`rating-course-${index}`"
-                  class="mask mask-star-2 bg-orange-400"
-                  value="4"
-                  v-model="course.satisfaction"
-                />
-                <input
-                  type="radio"
-                  :name="`rating-course-${index}`"
-                  class="mask mask-star-2 bg-orange-400"
-                  value="5"
-                  v-model="course.satisfaction"
-                />
-              </div>
+              <StarRating v-model="course.satisfaction" />
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
               <div class="rating-container">
                 <label>Quanto senti che sia stato importante per il tuo Percorso Formativo?</label>
-                <div class="rating">
-                  <input
-                    type="radio"
-                    :name="`rating-relevance-${index}`"
-                    class="mask mask-star-2 bg-orange-400"
-                    value="1"
-                    v-model="course.relevance"
-                  />
-                  <input
-                    type="radio"
-                    :name="`rating-relevance-${index}`"
-                    class="mask mask-star-2 bg-orange-400"
-                    value="2"
-                    v-model="course.relevance"
-                  />
-                  <input
-                    type="radio"
-                    :name="`rating-relevance-${index}`"
-                    class="mask mask-star-2 bg-orange-400"
-                    value="3"
-                    v-model="course.relevance"
-                  />
-                  <input
-                    type="radio"
-                    :name="`rating-relevance-${index}`"
-                    class="mask mask-star-2 bg-orange-400"
-                    value="4"
-                    v-model="course.relevance"
-                  />
-                  <input
-                    type="radio"
-                    :name="`rating-relevance-${index}`"
-                    class="mask mask-star-2 bg-orange-400"
-                    value="5"
-                    v-model="course.relevance"
-                  />
-                </div>
+                <StarRating v-model="course.relevance" />
               </div>
 
               <div>
@@ -637,125 +530,17 @@ function submitSurvey() {
 
               <div class="rating-container">
                 <label>Corrispondenza tra Descrizione/Titolo del Corso e Contenuti Effettivi</label>
-                <div class="rating">
-                  <input
-                    type="radio"
-                    :name="`rating-description-${index}`"
-                    class="mask mask-star-2 bg-orange-400"
-                    value="1"
-                    v-model="course.courseDescriptionMatch"
-                  />
-                  <input
-                    type="radio"
-                    :name="`rating-description-${index}`"
-                    class="mask mask-star-2 bg-orange-400"
-                    value="2"
-                    v-model="course.courseDescriptionMatch"
-                  />
-                  <input
-                    type="radio"
-                    :name="`rating-description-${index}`"
-                    class="mask mask-star-2 bg-orange-400"
-                    value="3"
-                    v-model="course.courseDescriptionMatch"
-                  />
-                  <input
-                    type="radio"
-                    :name="`rating-description-${index}`"
-                    class="mask mask-star-2 bg-orange-400"
-                    value="4"
-                    v-model="course.courseDescriptionMatch"
-                  />
-                  <input
-                    type="radio"
-                    :name="`rating-description-${index}`"
-                    class="mask mask-star-2 bg-orange-400"
-                    value="5"
-                    v-model="course.courseDescriptionMatch"
-                  />
-                </div>
+                <StarRating v-model="course.courseDescriptionMatch" />
               </div>
 
               <div class="rating-container">
                 <label>Coerenza tra Contenuti del Corso e Modalità di Valutazione</label>
-                <div class="rating">
-                  <input
-                    type="radio"
-                    :name="`rating-coherence-${index}`"
-                    class="mask mask-star-2 bg-orange-400"
-                    value="1"
-                    v-model="course.evaluationCoherence"
-                  />
-                  <input
-                    type="radio"
-                    :name="`rating-coherence-${index}`"
-                    class="mask mask-star-2 bg-orange-400"
-                    value="2"
-                    v-model="course.evaluationCoherence"
-                  />
-                  <input
-                    type="radio"
-                    :name="`rating-coherence-${index}`"
-                    class="mask mask-star-2 bg-orange-400"
-                    value="3"
-                    v-model="course.evaluationCoherence"
-                  />
-                  <input
-                    type="radio"
-                    :name="`rating-coherence-${index}`"
-                    class="mask mask-star-2 bg-orange-400"
-                    value="4"
-                    v-model="course.evaluationCoherence"
-                  />
-                  <input
-                    type="radio"
-                    :name="`rating-coherence-${index}`"
-                    class="mask mask-star-2 bg-orange-400"
-                    value="5"
-                    v-model="course.evaluationCoherence"
-                  />
-                </div>
+                <StarRating v-model="course.evaluationCoherence" />
               </div>
 
               <div class="rating-container">
                 <label>Qualità del Materiale Didattico</label>
-                <div class="rating">
-                  <input
-                    type="radio"
-                    :name="`rating-material-${index}`"
-                    class="mask mask-star-2 bg-orange-400"
-                    value="1"
-                    v-model="course.materialQuality"
-                  />
-                  <input
-                    type="radio"
-                    :name="`rating-material-${index}`"
-                    class="mask mask-star-2 bg-orange-400"
-                    value="2"
-                    v-model="course.materialQuality"
-                  />
-                  <input
-                    type="radio"
-                    :name="`rating-material-${index}`"
-                    class="mask mask-star-2 bg-orange-400"
-                    value="3"
-                    v-model="course.materialQuality"
-                  />
-                  <input
-                    type="radio"
-                    :name="`rating-material-${index}`"
-                    class="mask mask-star-2 bg-orange-400"
-                    value="4"
-                    v-model="course.materialQuality"
-                  />
-                  <input
-                    type="radio"
-                    :name="`rating-material-${index}`"
-                    class="mask mask-star-2 bg-orange-400"
-                    value="5"
-                    v-model="course.materialQuality"
-                  />
-                </div>
+                <StarRating v-model="course.materialQuality" />
               </div>
 
               <div>
@@ -783,125 +568,17 @@ function submitSurvey() {
                   <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div class="rating-container">
                       <label>Preparazione</label>
-                      <div class="rating">
-                        <input
-                          type="radio"
-                          :name="`rating-teacher-prep-${index}-${profIndex}`"
-                          class="mask mask-star-2 bg-orange-400"
-                          value="1"
-                          v-model="professor.preparation"
-                        />
-                        <input
-                          type="radio"
-                          :name="`rating-teacher-prep-${index}-${profIndex}`"
-                          class="mask mask-star-2 bg-orange-400"
-                          value="2"
-                          v-model="professor.preparation"
-                        />
-                        <input
-                          type="radio"
-                          :name="`rating-teacher-prep-${index}-${profIndex}`"
-                          class="mask mask-star-2 bg-orange-400"
-                          value="3"
-                          v-model="professor.preparation"
-                        />
-                        <input
-                          type="radio"
-                          :name="`rating-teacher-prep-${index}-${profIndex}`"
-                          class="mask mask-star-2 bg-orange-400"
-                          value="4"
-                          v-model="professor.preparation"
-                        />
-                        <input
-                          type="radio"
-                          :name="`rating-teacher-prep-${index}-${profIndex}`"
-                          class="mask mask-star-2 bg-orange-400"
-                          value="5"
-                          v-model="professor.preparation"
-                        />
-                      </div>
+                      <StarRating v-model="professor.preparation" />
                     </div>
 
                     <div class="rating-container">
                       <label>Chiarezza</label>
-                      <div class="rating">
-                        <input
-                          type="radio"
-                          :name="`rating-teacher-clarity-${index}-${profIndex}`"
-                          class="mask mask-star-2 bg-orange-400"
-                          value="1"
-                          v-model="professor.clarity"
-                        />
-                        <input
-                          type="radio"
-                          :name="`rating-teacher-clarity-${index}-${profIndex}`"
-                          class="mask mask-star-2 bg-orange-400"
-                          value="2"
-                          v-model="professor.clarity"
-                        />
-                        <input
-                          type="radio"
-                          :name="`rating-teacher-clarity-${index}-${profIndex}`"
-                          class="mask mask-star-2 bg-orange-400"
-                          value="3"
-                          v-model="professor.clarity"
-                        />
-                        <input
-                          type="radio"
-                          :name="`rating-teacher-clarity-${index}-${profIndex}`"
-                          class="mask mask-star-2 bg-orange-400"
-                          value="4"
-                          v-model="professor.clarity"
-                        />
-                        <input
-                          type="radio"
-                          :name="`rating-teacher-clarity-${index}-${profIndex}`"
-                          class="mask mask-star-2 bg-orange-400"
-                          value="5"
-                          v-model="professor.clarity"
-                        />
-                      </div>
+                      <StarRating v-model="professor.clarity" />
                     </div>
 
                     <div class="rating-container">
                       <label>Disponibilità</label>
-                      <div class="rating">
-                        <input
-                          type="radio"
-                          :name="`rating-teacher-avail-${index}-${profIndex}`"
-                          class="mask mask-star-2 bg-orange-400"
-                          value="1"
-                          v-model="professor.availability"
-                        />
-                        <input
-                          type="radio"
-                          :name="`rating-teacher-avail-${index}-${profIndex}`"
-                          class="mask mask-star-2 bg-orange-400"
-                          value="2"
-                          v-model="professor.availability"
-                        />
-                        <input
-                          type="radio"
-                          :name="`rating-teacher-avail-${index}-${profIndex}`"
-                          class="mask mask-star-2 bg-orange-400"
-                          value="3"
-                          v-model="professor.availability"
-                        />
-                        <input
-                          type="radio"
-                          :name="`rating-teacher-avail-${index}-${profIndex}`"
-                          class="mask mask-star-2 bg-orange-400"
-                          value="4"
-                          v-model="professor.availability"
-                        />
-                        <input
-                          type="radio"
-                          :name="`rating-teacher-avail-${index}-${profIndex}`"
-                          class="mask mask-star-2 bg-orange-400"
-                          value="5"
-                          v-model="professor.availability"
-                        />
-                      </div>
+                      <StarRating v-model="professor.availability" />
                     </div>
 
                     <div>
@@ -952,43 +629,7 @@ function submitSurvey() {
                 >Ritieni che il tuo curriculum ti abbia fornito le competenze che ti
                 aspettavi?</label
               >
-              <div class="rating rating-lg">
-                <input
-                  type="radio"
-                  name="rating-curriculum"
-                  class="mask mask-star-2 bg-orange-400"
-                  value="1"
-                  v-model="curriculumAnalysis.expectedCompetencies"
-                />
-                <input
-                  type="radio"
-                  name="rating-curriculum"
-                  class="mask mask-star-2 bg-orange-400"
-                  value="2"
-                  v-model="curriculumAnalysis.expectedCompetencies"
-                />
-                <input
-                  type="radio"
-                  name="rating-curriculum"
-                  class="mask mask-star-2 bg-orange-400"
-                  value="3"
-                  v-model="curriculumAnalysis.expectedCompetencies"
-                />
-                <input
-                  type="radio"
-                  name="rating-curriculum"
-                  class="mask mask-star-2 bg-orange-400"
-                  value="4"
-                  v-model="curriculumAnalysis.expectedCompetencies"
-                />
-                <input
-                  type="radio"
-                  name="rating-curriculum"
-                  class="mask mask-star-2 bg-orange-400"
-                  value="5"
-                  v-model="curriculumAnalysis.expectedCompetencies"
-                />
-              </div>
+              <StarRating v-model="curriculumAnalysis.expectedCompetencies" />
             </div>
 
             <div>
@@ -1074,43 +715,7 @@ function submitSurvey() {
 
             <div class="rating-container">
               <label>Interesse per moduli brevi (3 CFU) su competenze tecniche specifiche</label>
-              <div class="rating rating-lg">
-                <input
-                  type="radio"
-                  name="rating-modules"
-                  class="mask mask-star-2 bg-orange-400"
-                  value="1"
-                  v-model="curriculumAnalysis.shortModulesInterest"
-                />
-                <input
-                  type="radio"
-                  name="rating-modules"
-                  class="mask mask-star-2 bg-orange-400"
-                  value="2"
-                  v-model="curriculumAnalysis.shortModulesInterest"
-                />
-                <input
-                  type="radio"
-                  name="rating-modules"
-                  class="mask mask-star-2 bg-orange-400"
-                  value="3"
-                  v-model="curriculumAnalysis.shortModulesInterest"
-                />
-                <input
-                  type="radio"
-                  name="rating-modules"
-                  class="mask mask-star-2 bg-orange-400"
-                  value="4"
-                  v-model="curriculumAnalysis.shortModulesInterest"
-                />
-                <input
-                  type="radio"
-                  name="rating-modules"
-                  class="mask mask-star-2 bg-orange-400"
-                  value="5"
-                  v-model="curriculumAnalysis.shortModulesInterest"
-                />
-              </div>
+              <StarRating v-model="curriculumAnalysis.shortModulesInterest" />
             </div>
 
             <div>
@@ -1142,43 +747,7 @@ function submitSurvey() {
               <label
                 >Percezione di preparazione rispetto alle richieste del mercato del lavoro</label
               >
-              <div class="rating rating-lg">
-                <input
-                  type="radio"
-                  name="rating-preparation"
-                  class="mask mask-star-2 bg-orange-400"
-                  value="1"
-                  v-model="futurePlans.preparationPerception"
-                />
-                <input
-                  type="radio"
-                  name="rating-preparation"
-                  class="mask mask-star-2 bg-orange-400"
-                  value="2"
-                  v-model="futurePlans.preparationPerception"
-                />
-                <input
-                  type="radio"
-                  name="rating-preparation"
-                  class="mask mask-star-2 bg-orange-400"
-                  value="3"
-                  v-model="futurePlans.preparationPerception"
-                />
-                <input
-                  type="radio"
-                  name="rating-preparation"
-                  class="mask mask-star-2 bg-orange-400"
-                  value="4"
-                  v-model="futurePlans.preparationPerception"
-                />
-                <input
-                  type="radio"
-                  name="rating-preparation"
-                  class="mask mask-star-2 bg-orange-400"
-                  value="5"
-                  v-model="futurePlans.preparationPerception"
-                />
-              </div>
+              <StarRating v-model="futurePlans.preparationPerception" />
             </div>
 
             <div>
@@ -1191,43 +760,7 @@ function submitSurvey() {
 
             <div class="rating-container">
               <label>Percezione di Preparazione per il Mondo del Lavoro</label>
-              <div class="rating rating-lg">
-                <input
-                  type="radio"
-                  name="rating-work"
-                  class="mask mask-star-2 bg-orange-400"
-                  value="1"
-                  v-model="satisfaction.workPreparation"
-                />
-                <input
-                  type="radio"
-                  name="rating-work"
-                  class="mask mask-star-2 bg-orange-400"
-                  value="2"
-                  v-model="satisfaction.workPreparation"
-                />
-                <input
-                  type="radio"
-                  name="rating-work"
-                  class="mask mask-star-2 bg-orange-400"
-                  value="3"
-                  v-model="satisfaction.workPreparation"
-                />
-                <input
-                  type="radio"
-                  name="rating-work"
-                  class="mask mask-star-2 bg-orange-400"
-                  value="4"
-                  v-model="satisfaction.workPreparation"
-                />
-                <input
-                  type="radio"
-                  name="rating-work"
-                  class="mask mask-star-2 bg-orange-400"
-                  value="5"
-                  v-model="satisfaction.workPreparation"
-                />
-              </div>
+              <StarRating v-model="satisfaction.workPreparation" />
             </div>
 
             <div class="rating-container">
@@ -1235,84 +768,12 @@ function submitSurvey() {
                 >Valutazione dell'Organizzazione Didattica (orari, calendario, distribuzione dei
                 corsi)</label
               >
-              <div class="rating rating-lg">
-                <input
-                  type="radio"
-                  name="rating-org"
-                  class="mask mask-star-2 bg-orange-400"
-                  value="1"
-                  v-model="satisfaction.organization"
-                />
-                <input
-                  type="radio"
-                  name="rating-org"
-                  class="mask mask-star-2 bg-orange-400"
-                  value="2"
-                  v-model="satisfaction.organization"
-                />
-                <input
-                  type="radio"
-                  name="rating-org"
-                  class="mask mask-star-2 bg-orange-400"
-                  value="3"
-                  v-model="satisfaction.organization"
-                />
-                <input
-                  type="radio"
-                  name="rating-org"
-                  class="mask mask-star-2 bg-orange-400"
-                  value="4"
-                  v-model="satisfaction.organization"
-                />
-                <input
-                  type="radio"
-                  name="rating-org"
-                  class="mask mask-star-2 bg-orange-400"
-                  value="5"
-                  v-model="satisfaction.organization"
-                />
-              </div>
+              <StarRating v-model="satisfaction.organization" />
             </div>
 
             <div class="rating-container">
               <label>Valutazione delle Strutture e dei Servizi di Supporto</label>
-              <div class="rating rating-lg">
-                <input
-                  type="radio"
-                  name="rating-facilities"
-                  class="mask mask-star-2 bg-orange-400"
-                  value="1"
-                  v-model="satisfaction.facilities"
-                />
-                <input
-                  type="radio"
-                  name="rating-facilities"
-                  class="mask mask-star-2 bg-orange-400"
-                  value="2"
-                  v-model="satisfaction.facilities"
-                />
-                <input
-                  type="radio"
-                  name="rating-facilities"
-                  class="mask mask-star-2 bg-orange-400"
-                  value="3"
-                  v-model="satisfaction.facilities"
-                />
-                <input
-                  type="radio"
-                  name="rating-facilities"
-                  class="mask mask-star-2 bg-orange-400"
-                  value="4"
-                  v-model="satisfaction.facilities"
-                />
-                <input
-                  type="radio"
-                  name="rating-facilities"
-                  class="mask mask-star-2 bg-orange-400"
-                  value="5"
-                  v-model="satisfaction.facilities"
-                />
-              </div>
+              <StarRating v-model="satisfaction.facilities" />
             </div>
           </div>
 

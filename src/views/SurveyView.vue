@@ -3,7 +3,6 @@ import { ref, computed, watch } from 'vue'
 import degreesData from '../../config/degrees.json'
 import teachingsData from '../../config/teachings.json'
 
-// Sposta la definizione di emptyCourse prima del suo utilizzo
 const emptyCourse = {
   name: '',
   satisfaction: 0,
@@ -21,7 +20,6 @@ const emptyCourse = {
   bestCurriculum: '',
 }
 
-// Ora puoi usare emptyCourse
 const courses = ref([{ ...emptyCourse }])
 
 // Lista dei curriculum disponibili
@@ -125,13 +123,35 @@ const satisfaction = ref({
   facilities: 0,
 })
 
-const curriculumAnalysis = ref({
+const curriculumAnalysis = ref<{
+  expectedCompetencies: number
+  missingPreferences: string
+  missingTopics: Record<string, string>
+  missingUndergraduateCourses: string
+  shortModulesInterest: number
+  coursesSuggestions: string
+}>({
   expectedCompetencies: 0,
-  missingTopics: '',
+  missingPreferences: '',
+  missingTopics: {},
   missingUndergraduateCourses: '',
   shortModulesInterest: 0,
   coursesSuggestions: '',
 })
+
+const missingTopics = [
+  'Architettura degli elaboratori',
+  'Logica',
+  'Programmazione',
+  'Algoritmi e strutture dati',
+  'Linguaggi di programmazione',
+  'Sistemi operativi',
+  'Tecnologie web',
+  'Ingegneria informatica',
+  'Informatica teorica',
+  'Basi di dati',
+  'Reti di calcolatori',
+]
 
 const futurePlans = ref({
   intentions: '',
@@ -229,7 +249,7 @@ function submitSurvey() {
           <div class="space-y-4">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label class="label">Genere</label>
+                <label>Genere</label>
                 <select
                   v-model="studentProfile.gender"
                   class="select validator select-bordered w-full"
@@ -242,7 +262,7 @@ function submitSurvey() {
               </div>
 
               <div>
-                <label class="label">Età</label>
+                <label>Età</label>
                 <input
                   type="number"
                   v-model="studentProfile.age"
@@ -254,7 +274,7 @@ function submitSurvey() {
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label class="label">Provenienza</label>
+                <label>Provenienza</label>
                 <select
                   v-model="studentProfile.residence"
                   class="select validator select-bordered w-full"
@@ -271,7 +291,8 @@ function submitSurvey() {
               </div>
 
               <div>
-                <label class="label">Anno di Immatricolazione</label>
+                <!-- TODO: usare dropdown con aa... -->
+                <label>Anno di Immatricolazione</label>
                 <input
                   type="number"
                   v-model="studentProfile.enrollmentYear"
@@ -281,7 +302,7 @@ function submitSurvey() {
             </div>
 
             <div>
-              <label class="label">Status Particolari (seleziona tutti quelli applicabili)</label>
+              <label>Status Particolari (seleziona tutti quelli applicabili)</label>
               <div class="flex flex-wrap gap-2">
                 <label class="label cursor-pointer gap-2">
                   <input
@@ -315,7 +336,7 @@ function submitSurvey() {
             <div>
               <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label class="label">Corso di Laurea Triennale</label>
+                  <label>Corso di Laurea Triennale</label>
                   <input
                     type="text"
                     v-model="studentProfile.academicBackground.degree"
@@ -324,7 +345,7 @@ function submitSurvey() {
                 </div>
 
                 <div>
-                  <label class="label">Ateneo di Provenienza</label>
+                  <label>Ateneo di Provenienza</label>
                   <input
                     type="text"
                     v-model="studentProfile.academicBackground.university"
@@ -334,36 +355,38 @@ function submitSurvey() {
               </div>
             </div>
 
-          <!-- Valutazione complessiva -->
-          <section class="divider divider-primary mt-8">Valutazione del percorso di studi</section>
-          <div class="space-y-6">
-            <div>
-              <label class="label">Quale Curriculum hai scelto?</label>
-              <select
-                v-model="studentProfile.curriculum"
-                class="select validator select-bordered w-full"
-              >
-                <option disabled selected value="">Seleziona</option>
-                <option
-                  v-for="curriculum in curriculumOptions"
-                  :key="curriculum"
-                  :value="curriculum"
+            <!-- Valutazione complessiva -->
+            <section class="divider divider-primary mt-8">
+              Valutazione del percorso di studi
+            </section>
+            <div class="space-y-6">
+              <div>
+                <label>Quale Curriculum hai scelto?</label>
+                <select
+                  v-model="studentProfile.curriculum"
+                  class="select validator select-bordered w-full"
                 >
-                  {{ curriculum }}
-                </option>
-              </select>
-            </div>
+                  <option disabled selected value="">Seleziona</option>
+                  <option
+                    v-for="curriculum in curriculumOptions"
+                    :key="curriculum"
+                    :value="curriculum"
+                  >
+                    {{ curriculum }}
+                  </option>
+                </select>
+              </div>
 
-            <div>
-              <label class="label">Perché hai scelto questo Curriculum?</label>
-              <textarea
-                v-model="studentProfile.motivation"
-                class="textarea textarea-bordered w-full h-24"
-              ></textarea>
+              <div>
+                <label>Perché hai scelto questo Curriculum?</label>
+                <textarea
+                  v-model="studentProfile.motivation"
+                  class="textarea textarea-bordered w-full h-24"
+                ></textarea>
+              </div>
             </div>
-          </div>
             <div class="rating-container">
-              <label class="label">Quanto sei soddisfatto ad oggi del Curriculum scelto?</label>
+              <label>Quanto sei soddisfatto ad oggi del Curriculum scelto?</label>
               <div class="rating rating-lg">
                 <input
                   type="radio"
@@ -404,142 +427,13 @@ function submitSurvey() {
             </div>
 
             <div>
-              <label class="label"
-                >Corrispondenza tra Aspettative Iniziali e Realtà del Percorso</label
-              >
+              <label>Corrispondenza tra Aspettative Iniziali e Realtà del Percorso</label>
               <textarea
                 v-model="satisfaction.expectations"
                 class="textarea textarea-bordered w-full h-24"
               ></textarea>
             </div>
-
-            <div class="rating-container">
-              <label class="label">Percezione di Preparazione per il Mondo del Lavoro</label>
-              <div class="rating rating-lg">
-                <input
-                  type="radio"
-                  name="rating-work"
-                  class="mask mask-star-2 bg-orange-400"
-                  value="1"
-                  v-model="satisfaction.workPreparation"
-                />
-                <input
-                  type="radio"
-                  name="rating-work"
-                  class="mask mask-star-2 bg-orange-400"
-                  value="2"
-                  v-model="satisfaction.workPreparation"
-                />
-                <input
-                  type="radio"
-                  name="rating-work"
-                  class="mask mask-star-2 bg-orange-400"
-                  value="3"
-                  v-model="satisfaction.workPreparation"
-                />
-                <input
-                  type="radio"
-                  name="rating-work"
-                  class="mask mask-star-2 bg-orange-400"
-                  value="4"
-                  v-model="satisfaction.workPreparation"
-                />
-                <input
-                  type="radio"
-                  name="rating-work"
-                  class="mask mask-star-2 bg-orange-400"
-                  value="5"
-                  v-model="satisfaction.workPreparation"
-                />
-              </div>
-            </div>
-
-            <div class="rating-container">
-              <label class="label"
-                >Valutazione dell'Organizzazione Didattica (orari, calendario, distribuzione dei
-                corsi)</label
-              >
-              <div class="rating rating-lg">
-                <input
-                  type="radio"
-                  name="rating-org"
-                  class="mask mask-star-2 bg-orange-400"
-                  value="1"
-                  v-model="satisfaction.organization"
-                />
-                <input
-                  type="radio"
-                  name="rating-org"
-                  class="mask mask-star-2 bg-orange-400"
-                  value="2"
-                  v-model="satisfaction.organization"
-                />
-                <input
-                  type="radio"
-                  name="rating-org"
-                  class="mask mask-star-2 bg-orange-400"
-                  value="3"
-                  v-model="satisfaction.organization"
-                />
-                <input
-                  type="radio"
-                  name="rating-org"
-                  class="mask mask-star-2 bg-orange-400"
-                  value="4"
-                  v-model="satisfaction.organization"
-                />
-                <input
-                  type="radio"
-                  name="rating-org"
-                  class="mask mask-star-2 bg-orange-400"
-                  value="5"
-                  v-model="satisfaction.organization"
-                />
-              </div>
-            </div>
-
-            <div class="rating-container">
-              <label class="label">Valutazione delle Strutture e dei Servizi di Supporto</label>
-              <div class="rating rating-lg">
-                <input
-                  type="radio"
-                  name="rating-facilities"
-                  class="mask mask-star-2 bg-orange-400"
-                  value="1"
-                  v-model="satisfaction.facilities"
-                />
-                <input
-                  type="radio"
-                  name="rating-facilities"
-                  class="mask mask-star-2 bg-orange-400"
-                  value="2"
-                  v-model="satisfaction.facilities"
-                />
-                <input
-                  type="radio"
-                  name="rating-facilities"
-                  class="mask mask-star-2 bg-orange-400"
-                  value="3"
-                  v-model="satisfaction.facilities"
-                />
-                <input
-                  type="radio"
-                  name="rating-facilities"
-                  class="mask mask-star-2 bg-orange-400"
-                  value="4"
-                  v-model="satisfaction.facilities"
-                />
-                <input
-                  type="radio"
-                  name="rating-facilities"
-                  class="mask mask-star-2 bg-orange-400"
-                  value="5"
-                  v-model="satisfaction.facilities"
-                />
-              </div>
-            </div>
           </div>
-
           <!-- Valutazione dei corsi -->
           <section class="divider divider-primary mt-8">Valutazione dei Corsi</section>
           <div
@@ -560,7 +454,7 @@ function submitSurvey() {
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
               <div>
-                <label class="label">Nome del Corso</label>
+                <label>Nome del Corso</label>
                 <select v-model="course.name" class="select validator select-bordered w-full">
                   <option disabled selected value="">Seleziona</option>
                   <option v-for="c in getAvailableCoursesForIndex(index)" :key="c" :value="c">
@@ -570,8 +464,10 @@ function submitSurvey() {
               </div>
             </div>
 
+            <!-- TODO: aggiungere dropdown x In quale aa hai seguito il corso? -->
+
             <div class="mb-4 rating-container">
-              <label class="label">Soddisfazione Generale</label>
+              <label>Soddisfazione Generale</label>
               <div class="rating rating-lg">
                 <input
                   type="radio"
@@ -613,7 +509,7 @@ function submitSurvey() {
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
               <div class="rating-container">
-                <label class="label">Rilevanza Percepita per il Tuo Percorso Formativo</label>
+                <label>Quanto senti che sia stato importante per il tuo Percorso Formativo?</label>
                 <div class="rating">
                   <input
                     type="radio"
@@ -654,7 +550,24 @@ function submitSurvey() {
               </div>
 
               <div>
-                <label class="label">Lo Sceglieresti Nuovamente?</label>
+                <label>A quale curriculum ritieni che questo corso dovrebbe appartenere?</label>
+                <select
+                  v-model="course.bestCurriculum"
+                  class="select validator select-bordered w-full"
+                >
+                  <option disabled selected value="">Seleziona</option>
+                  <option
+                    v-for="curriculum in curriculumOptions"
+                    :key="curriculum"
+                    :value="curriculum"
+                  >
+                    {{ curriculum }}
+                  </option>
+                </select>
+              </div>
+
+              <div>
+                <label>Lo Sceglieresti Nuovamente?</label>
                 <div class="flex gap-4">
                   <label class="label cursor-pointer">
                     <input
@@ -692,11 +605,9 @@ function submitSurvey() {
 
             <div class="space-y-4">
               <div>
-                <label class="label"
-                  >Adeguatezza del Carico di Lavoro Rispetto ai CFU Assegnati</label
-                >
+                <label>Il numero dei CFU assegnati sono adeguati al carico di lavoro?</label>
                 <div class="w-full flex items-center">
-                  <span class="label text-base-content mx-2">Insufficiente</span>
+                  <span class="label text-base-content mx-2">Troppo pochi</span>
                   <input
                     type="range"
                     min="1"
@@ -704,12 +615,13 @@ function submitSurvey() {
                     v-model="course.workload"
                     class="range range-accent range-xs join-item w-full"
                   />
-                  <span class="label text-base-content mx-2">Eccessivo</span>
+                  <span class="label text-base-content mx-2">Eccessivi</span>
                 </div>
+                <!-- TODO: mettere i range in numeri sotto -->
               </div>
 
               <div>
-                <label class="label">Equilibrio tra Teoria e Pratica</label>
+                <label>Equilibrio tra Teoria e Pratica</label>
                 <div class="flex items-center w-full">
                   <span class="label text-base-content mx-2">Troppa teoria</span>
                   <input
@@ -723,184 +635,140 @@ function submitSurvey() {
                 </div>
               </div>
 
+              <div class="rating-container">
+                <label>Corrispondenza tra Descrizione/Titolo del Corso e Contenuti Effettivi</label>
+                <div class="rating">
+                  <input
+                    type="radio"
+                    :name="`rating-description-${index}`"
+                    class="mask mask-star-2 bg-orange-400"
+                    value="1"
+                    v-model="course.courseDescriptionMatch"
+                  />
+                  <input
+                    type="radio"
+                    :name="`rating-description-${index}`"
+                    class="mask mask-star-2 bg-orange-400"
+                    value="2"
+                    v-model="course.courseDescriptionMatch"
+                  />
+                  <input
+                    type="radio"
+                    :name="`rating-description-${index}`"
+                    class="mask mask-star-2 bg-orange-400"
+                    value="3"
+                    v-model="course.courseDescriptionMatch"
+                  />
+                  <input
+                    type="radio"
+                    :name="`rating-description-${index}`"
+                    class="mask mask-star-2 bg-orange-400"
+                    value="4"
+                    v-model="course.courseDescriptionMatch"
+                  />
+                  <input
+                    type="radio"
+                    :name="`rating-description-${index}`"
+                    class="mask mask-star-2 bg-orange-400"
+                    value="5"
+                    v-model="course.courseDescriptionMatch"
+                  />
+                </div>
+              </div>
+
+              <div class="rating-container">
+                <label>Coerenza tra Contenuti del Corso e Modalità di Valutazione</label>
+                <div class="rating">
+                  <input
+                    type="radio"
+                    :name="`rating-coherence-${index}`"
+                    class="mask mask-star-2 bg-orange-400"
+                    value="1"
+                    v-model="course.evaluationCoherence"
+                  />
+                  <input
+                    type="radio"
+                    :name="`rating-coherence-${index}`"
+                    class="mask mask-star-2 bg-orange-400"
+                    value="2"
+                    v-model="course.evaluationCoherence"
+                  />
+                  <input
+                    type="radio"
+                    :name="`rating-coherence-${index}`"
+                    class="mask mask-star-2 bg-orange-400"
+                    value="3"
+                    v-model="course.evaluationCoherence"
+                  />
+                  <input
+                    type="radio"
+                    :name="`rating-coherence-${index}`"
+                    class="mask mask-star-2 bg-orange-400"
+                    value="4"
+                    v-model="course.evaluationCoherence"
+                  />
+                  <input
+                    type="radio"
+                    :name="`rating-coherence-${index}`"
+                    class="mask mask-star-2 bg-orange-400"
+                    value="5"
+                    v-model="course.evaluationCoherence"
+                  />
+                </div>
+              </div>
+
+              <div class="rating-container">
+                <label>Qualità del Materiale Didattico</label>
+                <div class="rating">
+                  <input
+                    type="radio"
+                    :name="`rating-material-${index}`"
+                    class="mask mask-star-2 bg-orange-400"
+                    value="1"
+                    v-model="course.materialQuality"
+                  />
+                  <input
+                    type="radio"
+                    :name="`rating-material-${index}`"
+                    class="mask mask-star-2 bg-orange-400"
+                    value="2"
+                    v-model="course.materialQuality"
+                  />
+                  <input
+                    type="radio"
+                    :name="`rating-material-${index}`"
+                    class="mask mask-star-2 bg-orange-400"
+                    value="3"
+                    v-model="course.materialQuality"
+                  />
+                  <input
+                    type="radio"
+                    :name="`rating-material-${index}`"
+                    class="mask mask-star-2 bg-orange-400"
+                    value="4"
+                    v-model="course.materialQuality"
+                  />
+                  <input
+                    type="radio"
+                    :name="`rating-material-${index}`"
+                    class="mask mask-star-2 bg-orange-400"
+                    value="5"
+                    v-model="course.materialQuality"
+                  />
+                </div>
+              </div>
+
               <div>
-                <label class="label">Equilibrio Ideale tra Teoria e Pratica per Questo Corso</label>
+                <label>Suggerimenti per Migliorare il Corso</label>
                 <textarea
-                  v-model="course.idealBalance"
-                  class="textarea textarea-bordered w-full"
+                  v-model="course.suggestions"
+                  class="textarea textarea-bordered w-full h-24"
+                  placeholder="Aggiungeresti/toglieresti qualche argomento? Modificheresti la modalità d'esame?"
                 ></textarea>
               </div>
 
-              <div class="rating-container">
-                <label class="label">Applicabilità delle Conoscenze nel Mondo Professionale</label>
-                <div class="rating">
-                  <input
-                    type="radio"
-                    :name="`rating-applicability-${index}`"
-                    class="mask mask-star-2 bg-orange-400"
-                    value="1"
-                    v-model="course.applicability"
-                  />
-                  <input
-                    type="radio"
-                    :name="`rating-applicability-${index}`"
-                    class="mask mask-star-2 bg-orange-400"
-                    value="2"
-                    v-model="course.applicability"
-                  />
-                  <input
-                    type="radio"
-                    :name="`rating-applicability-${index}`"
-                    class="mask mask-star-2 bg-orange-400"
-                    value="3"
-                    v-model="course.applicability"
-                  />
-                  <input
-                    type="radio"
-                    :name="`rating-applicability-${index}`"
-                    class="mask mask-star-2 bg-orange-400"
-                    value="4"
-                    v-model="course.applicability"
-                  />
-                  <input
-                    type="radio"
-                    :name="`rating-applicability-${index}`"
-                    class="mask mask-star-2 bg-orange-400"
-                    value="5"
-                    v-model="course.applicability"
-                  />
-                </div>
-              </div>
-
-              <div class="rating-container">
-                <label class="label"
-                  >Corrispondenza tra Descrizione/Titolo del Corso e Contenuti Effettivi</label
-                >
-                <div class="rating">
-                  <input
-                    type="radio"
-                    :name="`rating-description-${index}`"
-                    class="mask mask-star-2 bg-orange-400"
-                    value="1"
-                    v-model="course.courseDescriptionMatch"
-                  />
-                  <input
-                    type="radio"
-                    :name="`rating-description-${index}`"
-                    class="mask mask-star-2 bg-orange-400"
-                    value="2"
-                    v-model="course.courseDescriptionMatch"
-                  />
-                  <input
-                    type="radio"
-                    :name="`rating-description-${index}`"
-                    class="mask mask-star-2 bg-orange-400"
-                    value="3"
-                    v-model="course.courseDescriptionMatch"
-                  />
-                  <input
-                    type="radio"
-                    :name="`rating-description-${index}`"
-                    class="mask mask-star-2 bg-orange-400"
-                    value="4"
-                    v-model="course.courseDescriptionMatch"
-                  />
-                  <input
-                    type="radio"
-                    :name="`rating-description-${index}`"
-                    class="mask mask-star-2 bg-orange-400"
-                    value="5"
-                    v-model="course.courseDescriptionMatch"
-                  />
-                </div>
-              </div>
-
-              <div class="rating-container">
-                <label class="label"
-                  >Coerenza tra Contenuti del Corso e Modalità di Valutazione</label
-                >
-                <div class="rating">
-                  <input
-                    type="radio"
-                    :name="`rating-coherence-${index}`"
-                    class="mask mask-star-2 bg-orange-400"
-                    value="1"
-                    v-model="course.evaluationCoherence"
-                  />
-                  <input
-                    type="radio"
-                    :name="`rating-coherence-${index}`"
-                    class="mask mask-star-2 bg-orange-400"
-                    value="2"
-                    v-model="course.evaluationCoherence"
-                  />
-                  <input
-                    type="radio"
-                    :name="`rating-coherence-${index}`"
-                    class="mask mask-star-2 bg-orange-400"
-                    value="3"
-                    v-model="course.evaluationCoherence"
-                  />
-                  <input
-                    type="radio"
-                    :name="`rating-coherence-${index}`"
-                    class="mask mask-star-2 bg-orange-400"
-                    value="4"
-                    v-model="course.evaluationCoherence"
-                  />
-                  <input
-                    type="radio"
-                    :name="`rating-coherence-${index}`"
-                    class="mask mask-star-2 bg-orange-400"
-                    value="5"
-                    v-model="course.evaluationCoherence"
-                  />
-                </div>
-              </div>
-
-              <div class="rating-container">
-                <label class="label">Qualità del Materiale Didattico</label>
-                <div class="rating">
-                  <input
-                    type="radio"
-                    :name="`rating-material-${index}`"
-                    class="mask mask-star-2 bg-orange-400"
-                    value="1"
-                    v-model="course.materialQuality"
-                  />
-                  <input
-                    type="radio"
-                    :name="`rating-material-${index}`"
-                    class="mask mask-star-2 bg-orange-400"
-                    value="2"
-                    v-model="course.materialQuality"
-                  />
-                  <input
-                    type="radio"
-                    :name="`rating-material-${index}`"
-                    class="mask mask-star-2 bg-orange-400"
-                    value="3"
-                    v-model="course.materialQuality"
-                  />
-                  <input
-                    type="radio"
-                    :name="`rating-material-${index}`"
-                    class="mask mask-star-2 bg-orange-400"
-                    value="4"
-                    v-model="course.materialQuality"
-                  />
-                  <input
-                    type="radio"
-                    :name="`rating-material-${index}`"
-                    class="mask mask-star-2 bg-orange-400"
-                    value="5"
-                    v-model="course.materialQuality"
-                  />
-                </div>
-              </div>
-
               <div
-                class=" pt-4 border-t-2 border-base-content/10"
+                class="pt-4 border-t-2 border-base-content/10"
                 v-if="course.professorsEvaluation && course.professorsEvaluation.length > 0"
               >
                 <p class="label text-lg font-bold mb-2">Valutazione dei Docenti</p>
@@ -913,8 +781,8 @@ function submitSurvey() {
                   <h4 class="font-medium mb-2">Docente: {{ professor.id }}</h4>
 
                   <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div class='rating-container'>
-                      <label class="label">Preparazione</label>
+                    <div class="rating-container">
+                      <label>Preparazione</label>
                       <div class="rating">
                         <input
                           type="radio"
@@ -955,7 +823,7 @@ function submitSurvey() {
                     </div>
 
                     <div class="rating-container">
-                      <label class="label">Chiarezza</label>
+                      <label>Chiarezza</label>
                       <div class="rating">
                         <input
                           type="radio"
@@ -996,7 +864,7 @@ function submitSurvey() {
                     </div>
 
                     <div class="rating-container">
-                      <label class="label">Disponibilità</label>
+                      <label>Disponibilità</label>
                       <div class="rating">
                         <input
                           type="radio"
@@ -1034,6 +902,14 @@ function submitSurvey() {
                           v-model="professor.availability"
                         />
                       </div>
+                    </div>
+
+                    <div>
+                      <label>Commenti personali</label>
+                      <textarea
+                        v-model="course.suggestions"
+                        class="textarea textarea-bordered w-3/1 h-24"
+                      ></textarea>
                     </div>
                   </div>
                 </div>
@@ -1044,34 +920,6 @@ function submitSurvey() {
                 >
                   Seleziona un corso per valutare i docenti.
                 </div>
-              </div>
-              <div class="divider"></div>
-
-              <div>
-                <label class="label"
-                  >A quale curriculum ritieni che questo corso dovrebbe appartenere?</label
-                >
-                <select
-                  v-model="course.bestCurriculum"
-                  class="select validator select-bordered w-full"
-                >
-                  <option disabled selected value="">Seleziona</option>
-                  <option
-                    v-for="curriculum in curriculumOptions"
-                    :key="curriculum"
-                    :value="curriculum"
-                  >
-                    {{ curriculum }}
-                  </option>
-                </select>
-              </div>
-
-              <div>
-                <label class="label">Suggerimenti per Migliorare il Corso</label>
-                <textarea
-                  v-model="course.suggestions"
-                  class="textarea textarea-bordered w-full h-24"
-                ></textarea>
               </div>
             </div>
           </div>
@@ -1100,7 +948,7 @@ function submitSurvey() {
           <section class="divider divider-primary mt-8">Analisi Curriculare e Suggerimenti</section>
           <div class="space-y-4">
             <div class="rating-container">
-              <label class="label"
+              <label
                 >Ritieni che il tuo curriculum ti abbia fornito le competenze che ti
                 aspettavi?</label
               >
@@ -1144,18 +992,79 @@ function submitSurvey() {
             </div>
 
             <div>
-              <label class="label"
-                >Quali argomenti vorresti fossero stati approfonditi maggiormente?</label
+              <label
+                >Vorresti dei corsi aggiuntivi che approfondiscono argomenti già trattati?</label
               >
-              <textarea
-                v-model="curriculumAnalysis.missingTopics"
-                class="textarea textarea-bordered w-full h-24"
-              ></textarea>
+              <div class="flex gap-4">
+                <label class="label cursor-pointer">
+                  <input
+                    type="radio"
+                    class="radio"
+                    value="sì"
+                    v-model="curriculumAnalysis.missingPreferences"
+                  />
+                  <span class="label-text ml-2">Sì</span>
+                </label>
+                <label class="label cursor-pointer">
+                  <input
+                    type="radio"
+                    class="radio"
+                    value="no"
+                    v-model="curriculumAnalysis.missingPreferences"
+                  />
+                  <span class="label-text ml-2">No</span>
+                </label>
+              </div>
+
+              <div
+                v-if="curriculumAnalysis.missingPreferences === 'sì'"
+                class="mt-2 p-2 rounded-xl bg-base-200"
+              >
+                <h1 class="mb-2">Tra quelli proposti di seguito quale approfondiresti?</h1>
+                <div
+                  class="grid grid-cols-2 md:grid-cols-3 gap-4 p-2"
+                  v-for="(course, index) in missingTopics"
+                  :key="index"
+                >
+                  <label>{{ course }}</label>
+                  <div class="flex gap-4">
+                    <label class="label cursor-pointer">
+                      <input
+                        type="radio"
+                        :name="`radio-choose-again-${index}`"
+                        class="radio"
+                        value="sì"
+                        v-model="curriculumAnalysis.missingTopics[course]"
+                      />
+                      <span class="label-text ml-2">Sì</span>
+                    </label>
+                    <label class="label cursor-pointer">
+                      <input
+                        type="radio"
+                        :name="`radio-choose-again-${index}`"
+                        class="radio"
+                        value="no"
+                        v-model="curriculumAnalysis.missingTopics[course]"
+                      />
+                      <span class="label-text ml-2">No</span>
+                    </label>
+                  </div>
+                  <div></div>
+                  <div v-if="index === missingTopics.length - 1" class="w-2/1">
+                    <input
+                      type="text"
+                      v-model="curriculumAnalysis.missingTopics.other"
+                      class="input input-bordered w-full"
+                      placeholder="Altro"
+                    />
+                  </div>
+                </div>
+              </div>
             </div>
 
             <div>
-              <label class="label"
-                >Interesse per corsi specifici della triennale non presenti nella magistrale</label
+              <label>
+                Interesse per corsi specifici della triennale non presenti nella magistrale</label
               >
               <textarea
                 v-model="curriculumAnalysis.missingUndergraduateCourses"
@@ -1164,9 +1073,7 @@ function submitSurvey() {
             </div>
 
             <div class="rating-container">
-              <label class="label"
-                >Interesse per moduli brevi (3 CFU) su competenze tecniche specifiche</label
-              >
+              <label>Interesse per moduli brevi (3 CFU) su competenze tecniche specifiche</label>
               <div class="rating rating-lg">
                 <input
                   type="radio"
@@ -1207,7 +1114,7 @@ function submitSurvey() {
             </div>
 
             <div>
-              <label class="label">Suggerimenti per nuovi corsi o modifiche al curriculum</label>
+              <label>Suggerimenti per nuovi corsi o modifiche al curriculum</label>
               <textarea
                 v-model="curriculumAnalysis.coursesSuggestions"
                 class="textarea textarea-bordered w-full h-24"
@@ -1219,7 +1126,7 @@ function submitSurvey() {
           <section class="divider divider-primary mt-8">Prospettive Future</section>
           <div class="space-y-4">
             <div>
-              <label class="label">Intenzioni post-laurea</label>
+              <label>Intenzioni post-laurea</label>
               <select
                 v-model="futurePlans.intentions"
                 class="select validator select-bordered w-full"
@@ -1232,7 +1139,7 @@ function submitSurvey() {
             </div>
 
             <div class="rating-container">
-              <label class="label"
+              <label
                 >Percezione di preparazione rispetto alle richieste del mercato del lavoro</label
               >
               <div class="rating rating-lg">
@@ -1275,20 +1182,144 @@ function submitSurvey() {
             </div>
 
             <div>
-              <label class="label"
-                >Competenze che ritieni manchino nel tuo percorso formativo</label
-              >
+              <label>Competenze che ritieni manchino nel tuo percorso formativo</label>
               <textarea
                 v-model="futurePlans.missingSkills"
                 class="textarea textarea-bordered w-full h-24"
               ></textarea>
+            </div>
+
+            <div class="rating-container">
+              <label>Percezione di Preparazione per il Mondo del Lavoro</label>
+              <div class="rating rating-lg">
+                <input
+                  type="radio"
+                  name="rating-work"
+                  class="mask mask-star-2 bg-orange-400"
+                  value="1"
+                  v-model="satisfaction.workPreparation"
+                />
+                <input
+                  type="radio"
+                  name="rating-work"
+                  class="mask mask-star-2 bg-orange-400"
+                  value="2"
+                  v-model="satisfaction.workPreparation"
+                />
+                <input
+                  type="radio"
+                  name="rating-work"
+                  class="mask mask-star-2 bg-orange-400"
+                  value="3"
+                  v-model="satisfaction.workPreparation"
+                />
+                <input
+                  type="radio"
+                  name="rating-work"
+                  class="mask mask-star-2 bg-orange-400"
+                  value="4"
+                  v-model="satisfaction.workPreparation"
+                />
+                <input
+                  type="radio"
+                  name="rating-work"
+                  class="mask mask-star-2 bg-orange-400"
+                  value="5"
+                  v-model="satisfaction.workPreparation"
+                />
+              </div>
+            </div>
+
+            <div class="rating-container">
+              <label
+                >Valutazione dell'Organizzazione Didattica (orari, calendario, distribuzione dei
+                corsi)</label
+              >
+              <div class="rating rating-lg">
+                <input
+                  type="radio"
+                  name="rating-org"
+                  class="mask mask-star-2 bg-orange-400"
+                  value="1"
+                  v-model="satisfaction.organization"
+                />
+                <input
+                  type="radio"
+                  name="rating-org"
+                  class="mask mask-star-2 bg-orange-400"
+                  value="2"
+                  v-model="satisfaction.organization"
+                />
+                <input
+                  type="radio"
+                  name="rating-org"
+                  class="mask mask-star-2 bg-orange-400"
+                  value="3"
+                  v-model="satisfaction.organization"
+                />
+                <input
+                  type="radio"
+                  name="rating-org"
+                  class="mask mask-star-2 bg-orange-400"
+                  value="4"
+                  v-model="satisfaction.organization"
+                />
+                <input
+                  type="radio"
+                  name="rating-org"
+                  class="mask mask-star-2 bg-orange-400"
+                  value="5"
+                  v-model="satisfaction.organization"
+                />
+              </div>
+            </div>
+
+            <div class="rating-container">
+              <label>Valutazione delle Strutture e dei Servizi di Supporto</label>
+              <div class="rating rating-lg">
+                <input
+                  type="radio"
+                  name="rating-facilities"
+                  class="mask mask-star-2 bg-orange-400"
+                  value="1"
+                  v-model="satisfaction.facilities"
+                />
+                <input
+                  type="radio"
+                  name="rating-facilities"
+                  class="mask mask-star-2 bg-orange-400"
+                  value="2"
+                  v-model="satisfaction.facilities"
+                />
+                <input
+                  type="radio"
+                  name="rating-facilities"
+                  class="mask mask-star-2 bg-orange-400"
+                  value="3"
+                  v-model="satisfaction.facilities"
+                />
+                <input
+                  type="radio"
+                  name="rating-facilities"
+                  class="mask mask-star-2 bg-orange-400"
+                  value="4"
+                  v-model="satisfaction.facilities"
+                />
+                <input
+                  type="radio"
+                  name="rating-facilities"
+                  class="mask mask-star-2 bg-orange-400"
+                  value="5"
+                  v-model="satisfaction.facilities"
+                />
+              </div>
             </div>
           </div>
 
           <!-- Commenti conclusivi -->
           <section class="divider divider-primary mt-8">Commenti Conclusivi</section>
           <div>
-            <label class="label">Feedback aggiuntivi non coperti dalle domande precedenti</label>
+            <label>Feedback aggiuntivi non coperti dalle domande precedenti</label>
             <textarea
               v-model="conclusions.additionalFeedback"
               class="textarea textarea-bordered w-full h-32"

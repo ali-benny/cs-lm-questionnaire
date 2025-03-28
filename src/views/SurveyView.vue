@@ -417,7 +417,7 @@ function submitSurvey() {
           >
             <div class="flex justify-between items-center mb-4">
               <h3 class="text-lg font-semibold">Corso #{{ index + 1 }}</h3>
-              <button
+              <button type="button"
                 @click="removeCourse(index)"
                 class="btn btn-sm btn-error"
                 :disabled="courses.length <= 1"
@@ -611,7 +611,7 @@ function submitSurvey() {
           </div>
 
           <div class="flex justify-center mt-4">
-            <button @click="addCourse" class="btn btn-outline btn-primary">
+            <button type="button" @click="addCourse" class="btn btn-outline btn-primary">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 class="h-6 w-6 mr-2"

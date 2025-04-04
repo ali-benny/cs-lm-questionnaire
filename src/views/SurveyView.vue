@@ -2,7 +2,7 @@
 import { ref, computed, watch } from 'vue'
 import degreesData from '../../config/degrees.json'
 import teachingsData from '../../config/teachings.json'
-import StarRating from '../components/StarRating.vue'
+import StarRating from '@/components/StarRating.vue'
 
 const emptyCourse = {
   name: '',
@@ -419,7 +419,7 @@ function submitSurvey() {
               <h3 class="text-lg font-semibold">Corso #{{ index + 1 }}</h3>
               <button
                 type="button"
-                @click="removeCourse(index)"
+                @click.stop.prevent="removeCourse(index)"
                 class="btn btn-sm btn-error"
                 :disabled="courses.length <= 1"
               >
@@ -612,7 +612,7 @@ function submitSurvey() {
           </div>
 
           <div class="flex justify-center mt-4">
-            <button type="button" @click="addCourse" class="btn btn-outline btn-primary">
+            <button type="button" @click.stop.prevent="addCourse" class="btn btn-outline btn-primary">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 class="h-6 w-6 mr-2"

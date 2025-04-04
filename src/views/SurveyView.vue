@@ -417,7 +417,8 @@ function submitSurvey() {
           >
             <div class="flex justify-between items-center mb-4">
               <h3 class="text-lg font-semibold">Corso #{{ index + 1 }}</h3>
-              <button type="button"
+              <button
+                type="button"
                 @click="removeCourse(index)"
                 class="btn btn-sm btn-error"
                 :disabled="courses.length <= 1"

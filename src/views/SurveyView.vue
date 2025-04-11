@@ -171,7 +171,6 @@ watch(
     courses.value.forEach((course, index) => {
       if (course.name) {
         const professors = getProfessorsForCourse(course.name)
-        console.log('PROF: ', professors)
 
         professors.forEach((professor, index) => {
           professors[index] = professor

@@ -171,6 +171,14 @@ watch(
     courses.value.forEach((course, index) => {
       if (course.name) {
         const professors = getProfessorsForCourse(course.name)
+        console.log('PROF: ', professors)
+
+        professors.forEach((professor, index) => {
+          professors[index] = professor
+            .split('.')
+            .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+            .join(' ');
+        })
 
         // Aggiorna l'array delle valutazioni dei professori
         course.professorsEvaluation = professors.map((profId) => {
@@ -219,8 +227,8 @@ function submitSurvey() {
 </script>
 
 <template>
-  <div class="py-6 space-y-10">
-    <div class="card bg-base-100 shadow-xl">
+  <div class="md:py-6 space-y-10">
+    <div class="card bg-base-100 shadow-xl m-0">
       <div class="card-body">
         <h1 class="card-title text-3xl mb-4">Questionario Studenti Magistrale</h1>
 
@@ -292,54 +300,53 @@ function submitSurvey() {
               </div>
 
               <div>
-                <!-- TODO: usare dropdown con aa... -->
                 <label>Anno di Immatricolazione</label>
-
                 <select
                   v-model="studentProfile.enrollmentYear"
                   class="select validator select-bordered w-full"
                 >
                   <option disabled selected value="">Seleziona</option>
                   <option
-                    v-for="year in [2019, 2020, 2021, 2022, 2023, 2024]"
+                    v-for="year in [2024, 2023, 2022, 2021, 2020, 2019]"
                     :key="year"
                     :value="year"
                   >
                     a.a. {{ year }}/{{ year + 1 }}
                   </option>
+                  <option value="precedente">Precedente</option>
                 </select>
               </div>
             </div>
 
             <div>
               <label>Status Particolari (seleziona tutti quelli applicabili)</label>
-              <div class="flex flex-wrap gap-2">
-                <label class="label cursor-pointer gap-2">
+              <div class="flex gap-4 mt-2">
+                <label class="cursor-pointer">
                   <input
                     type="checkbox"
-                    class="checkbox"
+                    class="checkbox checkbox-accent checkbox-sm"
                     value="lavoratore"
                     v-model="studentProfile.specialStatus"
                   />
-                  <span class="label-text">Lavoratore</span>
+                  Lavoratore
                 </label>
-                <label class="label cursor-pointer gap-2">
+                <label class="cursor-pointer">
                   <input
                     type="checkbox"
-                    class="checkbox"
+                    class="checkbox checkbox-accent checkbox-sm"
                     value="atleta"
                     v-model="studentProfile.specialStatus"
                   />
-                  <span class="label-text">Atleta</span>
+                  Atleta
                 </label>
-                <label class="label cursor-pointer gap-2">
+                <label class="cursor-pointer">
                   <input
                     type="checkbox"
-                    class="checkbox"
+                    class="checkbox checkbox-accent checkbox-sm"
                     value="tempo_parziale"
                     v-model="studentProfile.specialStatus"
                   />
-                  <span class="label-text">Studente a tempo parziale</span>
+                  Studente a tempo parziale
                 </label>
               </div>
             </div>
@@ -408,7 +415,8 @@ function submitSurvey() {
               ></textarea>
             </div>
           </div>
-          <!-- Valutazione dei corsi -->
+
+          <!-- Valutazione dei singoli corsi -->
           <section class="divider divider-primary mt-8">Valutazione dei Corsi</section>
           <div
             v-for="(course, index) in courses"
@@ -416,7 +424,9 @@ function submitSurvey() {
             class="mb-6 p-4 bg-base-200 rounded-box"
           >
             <div class="flex justify-between items-center mb-4">
-              <h3 class="text-lg font-semibold">Corso #{{ index + 1 }}</h3>
+              <h3 class="text-lg font-semibold">
+                Corso #{{ index + 1 }} {{ course.name ? '- ' + course.name : '' }}
+              </h3>
               <button
                 type="button"
                 @click.stop.prevent="removeCourse(index)"
@@ -427,7 +437,7 @@ function submitSurvey() {
               </button>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+            <div class="grid grid-cols-1 gap-4 mb-4">
               <div>
                 <label>Nome del Corso</label>
                 <select v-model="course.name" class="select validator select-bordered w-full">
@@ -437,16 +447,30 @@ function submitSurvey() {
                   </option>
                 </select>
               </div>
-            </div>
 
-            <!-- TODO: aggiungere dropdown x In quale aa hai seguito il corso? -->
+              <div>
+                <label>In quale Anno Accademico hai seguito il corso?</label>
+                <select
+                  v-model="studentProfile.enrollmentYear"
+                  class="select validator select-bordered w-full"
+                >
+                  <option disabled selected value="">Seleziona</option>
+                  <option
+                    v-for="year in [2024, 2023, 2022, 2021, 2020, 2019]"
+                    :key="year"
+                    :value="year"
+                  >
+                    a.a. {{ year }}/{{ year + 1 }}
+                  </option>
+                  <option value="precedente">Precedente</option>
+                </select>
+              </div>
 
-            <div class="mb-4 rating-container">
-              <label>Soddisfazione Generale</label>
-              <StarRating v-model="course.satisfaction" />
-            </div>
+              <div class="rating-container">
+                <label>Soddisfazione Generale</label>
+                <StarRating v-model="course.satisfaction" />
+              </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
               <div class="rating-container">
                 <label>Quanto senti che sia stato importante per il tuo Percorso Formativo?</label>
                 <StarRating v-model="course.relevance" />
@@ -454,19 +478,28 @@ function submitSurvey() {
 
               <div>
                 <label>A quale curriculum ritieni che questo corso dovrebbe appartenere?</label>
-                <select
-                  v-model="course.bestCurriculum"
-                  class="select validator select-bordered w-full"
-                >
-                  <option disabled selected value="">Seleziona</option>
-                  <option
+                <div class="flex gap-4 mt-2">
+                  <label
                     v-for="curriculum in curriculumOptions"
                     :key="curriculum"
                     :value="curriculum"
                   >
+                    <input
+                      type="checkbox"
+                      class="checkbox checkbox-accent checkbox-sm"
+                      :value="curriculum"
+                    />
                     {{ curriculum }}
-                  </option>
-                </select>
+                  </label>
+                  <label>
+                    <input
+                      type="checkbox"
+                      class="checkbox checkbox-accent checkbox-sm"
+                      value="Nessuno"
+                    />
+                    Nessuno
+                  </label>
+                </div>
               </div>
 
               <div>
@@ -510,7 +543,6 @@ function submitSurvey() {
               <div>
                 <label>Il numero dei CFU assegnati sono adeguati al carico di lavoro?</label>
                 <div class="w-full flex items-center">
-                  <span class="label text-base-content mx-2">Troppo pochi</span>
                   <input
                     type="range"
                     min="1"
@@ -518,15 +550,19 @@ function submitSurvey() {
                     v-model="course.workload"
                     class="range range-accent range-xs join-item w-full"
                   />
-                  <span class="label text-base-content mx-2">Eccessivi</span>
                 </div>
-                <!-- TODO: mettere i range in numeri sotto -->
+                <div class="grid grid-cols-5 w-full text-xs mt-1">
+                  <span
+                    v-for="range in 5"
+                    :class="range == 5 ? 'text-right' : range == 1 ? 'text-left' : 'text-center'"
+                    >{{ range == 1 ? 'Troppo Pochi' : range == 5 ? 'Eccessivi' : '•' }}</span
+                  >
+                </div>
               </div>
 
               <div>
                 <label>Equilibrio tra Teoria e Pratica</label>
                 <div class="flex items-center w-full">
-                  <span class="label text-base-content mx-2">Troppa teoria</span>
                   <input
                     type="range"
                     min="1"
@@ -534,7 +570,13 @@ function submitSurvey() {
                     v-model="course.theoryPracticeBalance"
                     class="range range-accent join-item w-full range-xs"
                   />
-                  <span class="label text-base-content mx-2">Troppa pratica</span>
+                </div>
+                <div class="grid grid-cols-5 w-full text-xs mt-1">
+                  <span
+                    v-for="range in 5"
+                    :class="range == 5 ? 'text-right' : range == 1 ? 'text-left' : 'text-center'"
+                    >{{ range == 1 ? 'Teorico' : range == 5 ? 'Pratico' : '•' }}</span
+                  >
                 </div>
               </div>
 
@@ -566,12 +608,12 @@ function submitSurvey() {
                 class="pt-4 border-t-2 border-base-content/10"
                 v-if="course.professorsEvaluation && course.professorsEvaluation.length > 0"
               >
-                <p class="label text-lg font-bold mb-2">Valutazione dei Docenti</p>
+                <p class="text-lg font-bold mb-2">Valutazione dei Docenti</p>
 
                 <div
                   v-for="(professor, profIndex) in course.professorsEvaluation"
                   :key="professor.id"
-                  class="mb-6 p-3 bg-base-300 rounded-box"
+                  class="p-3 bg-base-300 rounded-box"
                 >
                   <h4 class="font-medium mb-2">Docente: {{ professor.id }}</h4>
 
@@ -595,7 +637,7 @@ function submitSurvey() {
                       <label>Commenti personali</label>
                       <textarea
                         v-model="course.suggestions"
-                        class="textarea textarea-bordered w-3/1 h-24"
+                        class="textarea textarea-bordered w-full md:w-3/1 h-24"
                       ></textarea>
                     </div>
                   </div>
@@ -612,7 +654,11 @@ function submitSurvey() {
           </div>
 
           <div class="flex justify-center mt-4">
-            <button type="button" @click.stop.prevent="addCourse" class="btn btn-outline btn-primary">
+            <button
+              type="button"
+              @click.stop.prevent="addCourse"
+              class="btn btn-outline btn-primary"
+            >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 class="h-6 w-6 mr-2"

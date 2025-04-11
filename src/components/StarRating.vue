@@ -9,7 +9,7 @@ defineProps({
 
 const emit = defineEmits(['update:modelValue'])
 
-function updateRating(value) {
+function updateRating(value: number) {
   emit('update:modelValue', Number(value))
 }
 </script>
